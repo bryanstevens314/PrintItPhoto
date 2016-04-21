@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `students` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=27 ;
 
 --
--- Dumping data for table `tbl_users`
+-- Dumping data for table `students`
 --
 
 INSERT INTO `students` (`id`, `first_name`, `last_name`, `email_id`, `contact_no`) VALUES

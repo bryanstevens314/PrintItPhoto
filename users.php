@@ -26,7 +26,7 @@ $crud = new crud();
      </tr>
      <?php
   $query = "SELECT * FROM students";       
-  $records_per_page=3;
+  $records_per_page=5;
   $newquery = $crud->paging($query,$records_per_page);
   $crud->dataview($newquery);
   ?>
