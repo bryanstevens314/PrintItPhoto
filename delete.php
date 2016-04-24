@@ -55,7 +55,9 @@ if(isset($_POST['btn-del']))
          <th>Gender</th>
          </tr>
          <?php
-         $stmt = $DB_con->prepare("SELECT * FROM tbl_users WHERE id=:id");
+         $database = new Database();
+		 $dbConnection = $database->dbConnection();
+         $stmt = $dbConnection->prepare("SELECT * FROM students WHERE id=:id");
          $stmt->execute(array(":id"=>$_GET['delete_id']));
          while($row=$stmt->fetch(PDO::FETCH_BOTH))
          {
