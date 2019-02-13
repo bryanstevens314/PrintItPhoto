@@ -2,6 +2,12 @@
 session_start();
 require('app/dbconfig.php');
 require_once('app/class.user.php');
+require_once('app/class.customer.php');
+include_once 'app/customerConfig.php';
+include_once 'app/orderconfig.php';
+include_once 'app/class.order.php';
+require 'vendor/autoload.php';
+$customer1 = new CUSTOMER();
 $user = new USER();
 
 if($user->is_loggedin()!="")
@@ -15,10 +21,7 @@ if(isset($_POST['btn-signup']))
 	$umail = strip_tags($_POST['txt_umail']);
 	$upass = strip_tags($_POST['txt_upass']);	
 	
-	if($uname=="")	{
-		$error[] = "provide username !";	
-	}
-	else if($umail=="")	{
+	if($umail=="")	{
 		$error[] = "provide email id !";	
 	}
 	else if(!filter_var($umail, FILTER_VALIDATE_EMAIL))	{
@@ -38,16 +41,18 @@ if(isset($_POST['btn-signup']))
 			$stmt->execute(array(':uname'=>$uname, ':umail'=>$umail));
 			$row=$stmt->fetch(PDO::FETCH_ASSOC);
 				
-			if($row['user_name']==$uname) {
-				$error[] = "sorry username already taken !";
-			}
-			else if($row['user_email']==$umail) {
+			if($row['user_email']==$umail) {
 				$error[] = "sorry email id already taken !";
 			}
 			else
 			{
 				if($user->register($uname,$umail,$upass)){	
-					$user->redirect('sign-up.php?joined');
+					$query = "SELECT * 
+                    FROM customers
+                    ORDER BY ID DESC
+                    LIMIT 1";       
+            		$ID = $customer1->getCustomerID($query);
+					$user->redirect('https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8WINMiQvrQja2KXmFkvmzQnrlsTMGT6e&scope=read_write&redirect_uri=https://print-it-photo-stevens-apps.c9users.io/stripe_Redirect.php');
 				}
 			}
 		}
@@ -58,12 +63,14 @@ if(isset($_POST['btn-signup']))
 	}	
 }
 
+
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>PDO + CRUD</title>
+<title>Sign Up</title>
 <link href="css/bootstrap.min.css" rel="stylesheet" media="screen"> 
 <link href="css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
 <link rel="stylesheet" href="css/style.css" type="text/css"  />
@@ -76,7 +83,7 @@ if(isset($_POST['btn-signup']))
 <div class="container">
     	
         <form method="post" class="form-signin">
-            <h2 class="form-signin-heading">Sign up For CRUD.</h2><hr />
+            <h2 class="form-signin-heading">Sign up</h2><hr />
             <?php
 			if(isset($error))
 			{
@@ -98,9 +105,9 @@ if(isset($_POST['btn-signup']))
                  <?php
 			}
 			?>
-            <div class="form-group">
-            <input type="text" class="form-control" name="txt_uname" placeholder="Enter Username" value="<?php if(isset($error)){echo $uname;}?>" />
-            </div>
+            <!--<div class="form-group">-->
+            <!--<input type="text" class="form-control" name="txt_uname" placeholder="Enter Username" value="<?php if(isset($error)){echo $uname;}?>" />-->
+            <!--</div>-->
             <div class="form-group">
             <input type="text" class="form-control" name="txt_umail" placeholder="Enter E-Mail ID" value="<?php if(isset($error)){echo $umail;}?>" />
             </div>
@@ -110,15 +117,15 @@ if(isset($_POST['btn-signup']))
             <div class="clearfix"></div><hr />
             <div class="form-group">
             	<button type="submit" class="btn btn-primary" name="btn-signup">
-                	<i class="glyphicon glyphicon-open-file"></i>&nbsp;SIGN UP
+                	<i class="glyphicon glyphicon-open-file"></i>&nbsp;NEXT
                 </button>
             </div>
             <br />
-            <label>have an account ! <a href="index.php">Sign In</a></label>
+            <!--<label>have an account ! <a href="index.php">Sign In</a></label>-->
         </form>
        </div>
 </div>
 
 </div>
 
-<?php require_once('footer.php'); ?>
+<?php require_once('technical_stuffs/footer.php'); ?>
